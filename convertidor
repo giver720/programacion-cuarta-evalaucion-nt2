@@ -1,0 +1,98 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+
+void gotoxy(int x,int y){  
+      HANDLE hcon;  
+      hcon = GetStdHandle(STD_OUTPUT_HANDLE);  
+      COORD dwPos;  
+      dwPos.X = x;  
+      dwPos.Y= y;  
+      SetConsoleCursorPosition(hcon,dwPos);  
+ }  
+
+int main() {
+    int op;
+    do {
+        system("cls");
+        gotoxy(18,4); std::cout << "CALCULADORA FINANCIERA Y DE SALUD";
+        gotoxy(20,6); std::cout << "1. Convertir $ a Bs";
+        gotoxy(20,7); std::cout << "2. Convertir Bs a euros";
+        gotoxy(20,8); std::cout << "3. Tiempo para meta de ahorro";
+        gotoxy(20,9); std::cout << "4. Tiempo para alcanzar peso deseado";
+        gotoxy(20,10); std::cout << "5. Salir";
+        gotoxy(20,12); std::cout << "Opcion: ";
+        std::cin >> op;
+        system("cls");
+
+        if(op == 1) {
+            double monto, tasa, resultado;
+            gotoxy(15,5); std::cout << "CONVERTIR DOLARES A BOLIVARES";
+            gotoxy(15,7); std::cout << "Ingrese monto en dólares: ";
+            std::cin >> monto;
+            gotoxy(15,8); std::cout << "Ingrese tasa actual (Bs por 1$): ";
+            std::cin >> tasa;
+            resultado = monto * tasa;
+            gotoxy(15,10); std::cout << "Resultado: " << resultado << " Bs";
+            gotoxy(15,12); std::cout << "Presiona cualquier tecla para volver al menú...";
+            _getch();
+        } 
+        else if(op == 2) {
+            double monto_bs, tasa, euros;
+            gotoxy(15,5); std::cout << "CONVERTIR BOLIVARES A EUROS";
+            gotoxy(15,7); std::cout << "Ingrese monto en Bolívares: ";
+            std::cin >> monto_bs;
+            gotoxy(15,8); std::cout << "Ingrese tasa actual (Bs por 1 Euro): ";
+            std::cin >> tasa;
+            euros = monto_bs / tasa;
+            gotoxy(15,10); std::cout << "Resultado: " << euros << " Euros";
+            gotoxy(15,12); std::cout << "Presiona cualquier tecla para volver al menú...";
+            _getch();
+        } 
+        else if(op == 3) {
+            double meta, salario, gastos, ahorro, meses;
+            gotoxy(15,5); std::cout << "TIEMPO PARA LOGRAR META DE AHORRO";
+            gotoxy(15,7); std::cout << "Ingrese la meta a ahorrar (Bs): ";
+            std::cin >> meta;
+            gotoxy(15,8); std::cout << "Ingrese salario mensual base (Bs): ";
+            std::cin >> salario;
+            gotoxy(15,9); std::cout << "Ingrese gastos mensuales fijos (Bs): ";
+            std::cin >> gastos;
+            ahorro = salario - gastos;
+            if(ahorro <= 0) {
+                gotoxy(15,11); std::cout << "Error: No es posible ahorrar con estos valores.";
+            } else {
+                meses = meta / ahorro;
+                gotoxy(15,11); std::cout << "Ahorro mensual estimado: " << ahorro << " Bs";
+                gotoxy(15,12); std::cout << "Necesitarás aproximadamente " << meses << " meses";
+                double anos = meses / 12.0;
+                gotoxy(15,13); std::cout << "Equivalente a aproximadamente " << anos << " años";
+            }
+            gotoxy(15,15); std::cout << "Presiona cualquier tecla para volver al menú...";
+            _getch();
+        } 
+        else if(op == 4) {
+            double actual, deseado, kg_mes, diff, meses;
+            gotoxy(15,5); std::cout << "TIEMPO PARA ALCANZAR PESO DESEADO";
+            gotoxy(15,7); std::cout << "Ingrese peso actual (kg): ";
+            std::cin >> actual;
+            gotoxy(15,8); std::cout << "Ingrese peso deseado (kg): ";
+            std::cin >> deseado;
+            gotoxy(15,9); std::cout << "Ingrese kg que puede perder por mes: ";
+            std::cin >> kg_mes;
+            diff = actual - deseado;
+            if(diff <= 0 || kg_mes <= 0) {
+                gotoxy(15,11); std::cout << "Error: Verifique los datos ingresados.";
+            } else {
+                meses = diff / kg_mes;
+                gotoxy(15,11); std::cout << "Diferencia de peso: " << diff << " kg";
+                gotoxy(15,12); std::cout << "Tardarás aproximadamente " << meses << " meses";
+                double anos = meses / 12.0;
+                gotoxy(15,13); std::cout << "Equivalente a aproximadamente " << anos << " años";
+            }
+            gotoxy(15,15); std::cout << "Presiona cualquier tecla para volver al menú...";
+            _getch();
+        }
+    } while(op != 5);
+    return 0;
+}
