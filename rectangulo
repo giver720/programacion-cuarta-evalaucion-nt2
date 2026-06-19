@@ -1,0 +1,52 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+
+void gotoxy(int x,int y){  
+      HANDLE hcon;  
+      hcon = GetStdHandle(STD_OUTPUT_HANDLE);  
+      COORD dwPos;  
+      dwPos.X = x;  
+      dwPos.Y= y;  
+      SetConsoleCursorPosition(hcon,dwPos);  
+ }  
+
+int main(){  
+    system("cls");
+
+    int left = 15;
+    int top = 8;
+    int w = 30;
+    int h = 8;
+
+    for(int i = 0; i < w; i++){
+        gotoxy(left + i, top);
+        std::cout << "-";
+    }
+
+    for(int i = 0; i < w; i++){
+        gotoxy(left + i, top + h - 1);
+        std::cout << "-";
+    }
+
+    for(int i = 1; i < h - 1; i++){
+        gotoxy(left, top + i);
+        std::cout << "|";
+        gotoxy(left + w - 1, top + i);
+        std::cout << "|";
+    }
+
+    gotoxy(left, top); std::cout << "+";
+    gotoxy(left + w - 1, top); std::cout << "+";
+    gotoxy(left, top + h - 1); std::cout << "+";
+    gotoxy(left + w - 1, top + h - 1); std::cout << "+";
+
+    gotoxy(left + 13, top + 3);
+    std::cout << "2003";
+
+    gotoxy(0, top + h + 2);
+    std::cout << "Presiona cualquier tecla para salir...";
+    _getch();
+
+    return 0;
+}
