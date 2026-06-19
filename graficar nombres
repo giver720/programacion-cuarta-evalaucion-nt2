@@ -1,0 +1,97 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <string>
+#include <cctype>
+
+void gotoxy(int x,int y){  
+      HANDLE hcon;  
+      hcon = GetStdHandle(STD_OUTPUT_HANDLE);  
+      COORD dwPos;  
+      dwPos.X = x;  
+      dwPos.Y= y;  
+      SetConsoleCursorPosition(hcon,dwPos);  
+ }  
+
+std::string letterPatterns[26][5] = {
+    {"  *  ", " * * ", "*****", "*   *", "*   *"}, // A
+    {"**** ", "*   *", "**** ", "*   *", "**** "}, // B
+    {" ****", "*    ", "*    ", "*    ", " ****"}, // C
+    {"**** ", "*   *", "*   *", "*   *", "**** "}, // D
+    {"*****", "*    ", "*****", "*    ", "*****"}, // E
+    {"*****", "*    ", "*****", "*    ", "*    "}, // F
+    {" ****", "*    ", "*  **", "*   *", " ****"}, // G
+    {"*   *", "*   *", "*****", "*   *", "*   *"}, // H
+    {"*****", "  *  ", "  *  ", "  *  ", "*****"}, // I
+    {"  ***", "   * ", "   * ", "*  * ", " **  "}, // J
+    {"*   *", "*  * ", "***  ", "*  * ", "*   *"}, // K
+    {"*    ", "*    ", "*    ", "*    ", "*****"}, // L
+    {"*   *", "** **", "* * *", "*   *", "*   *"}, // M
+    {"*   *", "**  *", "* * *", "*  **", "*   *"}, // N
+    {" *** ", "*   *", "*   *", "*   *", " *** "}, // O
+    {"**** ", "*   *", "**** ", "*    ", "*    "}, // P
+    {" *** ", "*   *", "*   *", "*  **", " ** *"}, // Q
+    {"**** ", "*   *", "**** ", "*  * ", "*   *"}, // R
+    {" ****", "*    ", " *** ", "    *", "**** "}, // S
+    {"*****", "  *  ", "  *  ", "  *  ", "  *  "}, // T
+    {"*   *", "*   *", "*   *", "*   *", " *** "}, // U
+    {"*   *", "*   *", " * * ", " * * ", "  *  "}, // V
+    {"*   *", "*   *", "* * *", "** **", "*   *"}, // W
+    {"*   *", " * * ", "  *  ", " * * ", "*   *"}, // X
+    {"*   *", " * * ", "  *  ", "  *  ", "  *  "}, // Y
+    {"*****", "   * ", "  *  ", " *   ", "*****"}  // Z
+};
+
+void drawBigLetter(char ch, int x, int y) {
+    ch = std::toupper(static_cast<unsigned char>(ch));
+    if(ch < 'A' || ch > 'Z') return;
+    int idx = ch - 'A';
+    for(int r = 0; r < 5; r++) {
+        gotoxy(x, y + r);
+        std::cout << letterPatterns[idx][r];
+    }
+}
+
+int main() {
+    std::string nombre;
+    bool valid;
+    do {
+        system("cls");
+        gotoxy(18,5); std::cout << "GRAFICADOR DE NOMBRE CON GOTOXY";
+        gotoxy(15,7); std::cout << "Ingrese un nombre (1-8 letras, sin caracteres especiales): ";
+        std::cin >> nombre;
+
+        valid = true;
+        if(nombre.length() < 1 || nombre.length() > 8) valid = false;
+        for(char c : nombre) {
+            if(!std::isalpha(static_cast<unsigned char>(c))) {
+                valid = false;
+                break;
+            }
+        }
+
+        if(!valid) {
+            gotoxy(15,9); std::cout << "Nombre invalido. Solo letras A-Z/a-z, maximo 8 caracteres.";
+            gotoxy(15,10); std::cout << "Presiona cualquier tecla para intentar de nuevo...";
+            _getch();
+        }
+    } while(!valid);
+
+    system("cls");
+
+    int startY = 6;
+    int letterWidth = 6;
+    int totalWidth = nombre.length() * letterWidth;
+    int startX = (80 - totalWidth) / 2;
+    if(startX < 0) startX = 0;
+
+    for(size_t i = 0; i < nombre.length(); i++) {
+        drawBigLetter(nombre[i], startX + (i * letterWidth), startY);
+    }
+
+    gotoxy(20, startY + 7); std::cout << "Nombre graficado: " << nombre;
+    gotoxy(15, startY + 9); std::cout << "Presiona cualquier tecla para salir...";
+    _getch();
+
+    return 0;
+}
