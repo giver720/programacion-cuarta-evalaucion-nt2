@@ -1,0 +1,74 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <string>
+#include <cctype>
+
+void gotoxy(int x,int y){  
+      HANDLE hcon;  
+      hcon = GetStdHandle(STD_OUTPUT_HANDLE);  
+      COORD dwPos;  
+      dwPos.X = x;  
+      dwPos.Y= y;  
+      SetConsoleCursorPosition(hcon,dwPos);  
+ }  
+
+std::string digitPatterns[10][5] = {
+    {" *** ", "*   *", "*   *", "*   *", " *** "}, // 0
+    {"  *  ", " **  ", "  *  ", "  *  ", "*****"}, // 1
+    {" *** ", "*   *", "   * ", " *   ", "*****"}, // 2
+    {" *** ", "*   *", "  ** ", "*   *", " *** "}, // 3
+    {"*   *", "*   *", "*****", "    *", "    *"}, // 4
+    {"*****", "*    ", "**** ", "    *", "**** "}, // 5
+    {" *** ", "*    ", "**** ", "*   *", " *** "}, // 6
+    {"*****", "    *", "   * ", "  *  ", " *   "}, // 7
+    {" *** ", "*   *", " *** ", "*   *", " *** "}, // 8
+    {" *** ", "*   *", " ****", "    *", " *** "}  // 9
+};
+
+void drawBigDigit(char ch, int x, int y) {
+    if(ch < '0' || ch > '9') return;
+    int idx = ch - '0';
+    for(int r = 0; r < 5; r++) {
+        gotoxy(x, y + r);
+        std::cout << digitPatterns[idx][r];
+    }
+}
+
+int main() {
+    int numero;
+    bool valid;
+    do {
+        system("cls");
+        gotoxy(18,5); std::cout << "GRAFICADOR DE NUMERO CON GOTOXY";
+        gotoxy(15,7); std::cout << "Ingrese un numero entre 1 y 9999: ";
+        std::cin >> numero;
+
+        valid = (numero >= 1 && numero <= 9999);
+        if(!valid) {
+            gotoxy(15,9); std::cout << "Numero invalido. Debe estar entre 1 y 9999.";
+            gotoxy(15,10); std::cout << "Presiona cualquier tecla para intentar de nuevo...";
+            _getch();
+        }
+    } while(!valid);
+
+    system("cls");
+
+    std::string numStr = std::to_string(numero);
+
+    int startY = 6;
+    int digitWidth = 6;
+    int totalWidth = numStr.length() * digitWidth;
+    int startX = (80 - totalWidth) / 2;
+    if(startX < 0) startX = 0;
+
+    for(size_t i = 0; i < numStr.length(); i++) {
+        drawBigDigit(numStr[i], startX + (i * digitWidth), startY);
+    }
+
+    gotoxy(20, startY + 7); std::cout << "Numero graficado: " << numero;
+    gotoxy(15, startY + 9); std::cout << "Presiona cualquier tecla para salir...";
+    _getch();
+
+    return 0;
+}
