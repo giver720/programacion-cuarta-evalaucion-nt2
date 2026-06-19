@@ -1,0 +1,158 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+
+void gotoxy(int x, int y) {
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwPos;
+    dwPos.X = x;
+    dwPos.Y = y;
+    SetConsoleCursorPosition(hcon, dwPos);
+}
+
+void hide_cursor() {
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    cursorInfo.dwSize = 1;
+    cursorInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(h, &cursorInfo);
+}
+
+int main() {
+    hide_cursor();
+
+    const int HEIGHT = 12;
+    const int WIDTH = 25;
+    char maze[HEIGHT][WIDTH];
+
+    for(int y = 0; y < HEIGHT; y++) {
+        for(int x = 0; x < WIDTH; x++) {
+            if(y == 0 || y == HEIGHT-1 || x == 0 || x == WIDTH-1) {
+                maze[y][x] = '#';
+            } else {
+                maze[y][x] = ' ';
+            }
+        }
+    }
+
+    for(int y = 2; y <= 7; y++) {
+        maze[y][6] = '#';
+    }
+    for(int x = 8; x <= 16; x++) {
+        maze[5][x] = '#';
+    }
+    for(int y = 8; y <= 9; y++) {
+        maze[y][18] = '#';
+    }
+
+    maze[10][22] = 'G';
+
+    int start_x = 2;
+    int start_y = 2;
+    int px = start_x;
+    int py = start_y;
+
+    for(int y = 0; y < HEIGHT; y++) {
+        for(int x = 0; x < WIDTH; x++) {
+            gotoxy(x, y);
+            std::cout << maze[y][x];
+        }
+    }
+
+    gotoxy(px, py);
+    std::cout << 'O';
+
+    gotoxy(0, HEIGHT + 2);
+    std::cout << "Controles: Flechas o WASD | Q para salir";
+    gotoxy(0, HEIGHT + 3);
+    std::cout << "Evita chocar con #. Llega a la 'G' para ganar.";
+
+    bool running = true;
+
+    while(running) {
+        if(_kbhit()) {
+            int key = _getch();
+            int dx = 0, dy = 0;
+
+            if(key == 224 || key == -32) {
+                key = _getch();
+                if(key == 72) dy = -1;
+                else if(key == 80) dy = 1;
+                else if(key == 75) dx = -1;
+                else if(key == 77) dx = 1;
+            } 
+            else if(key == 'w' || key == 'W') dy = -1;
+            else if(key == 's' || key == 'S') dy = 1;
+            else if(key == 'a' || key == 'A') dx = -1;
+            else if(key == 'd' || key == 'D') dx = 1;
+            else if(key == 'q' || key == 'Q') {
+                running = false;
+                continue;
+            }
+
+            if(dx != 0 || dy != 0) {
+                int nx = px + dx;
+                int ny = py + dy;
+
+                if(nx < 0 || nx >= WIDTH || ny < 0 || ny >= HEIGHT || maze[ny][nx] == '#') {
+                    gotoxy(0, HEIGHT + 1);
+                    std::cout << "¡PERDISTE! Chocaste con un borde u obstáculo.";
+                    gotoxy(0, HEIGHT + 5);
+                    std::cout << "Presiona cualquier tecla para reiniciar...";
+
+                    while(!_kbhit()) Sleep(50);
+                    _getch();
+
+                    gotoxy(px, py);
+                    std::cout << maze[py][px];
+                    px = start_x;
+                    py = start_y;
+                    gotoxy(px, py);
+                    std::cout << 'O';
+
+                    gotoxy(0, HEIGHT + 1);
+                    std::cout << "                                                  ";
+                    gotoxy(0, HEIGHT + 5);
+                    std::cout << "                                                  ";
+                    continue;
+                }
+
+                gotoxy(px, py);
+                std::cout << maze[py][px];
+
+                px = nx;
+                py = ny;
+
+                gotoxy(px, py);
+                std::cout << 'O';
+
+                if(maze[py][px] == 'G') {
+                    gotoxy(0, HEIGHT + 1);
+                    std::cout << "¡GANASTE! Llegaste a la meta. Reiniciando laberinto...";
+                    Sleep(1800);
+
+                    gotoxy(px, py);
+                    std::cout << maze[py][px];
+                    px = start_x;
+                    py = start_y;
+                    gotoxy(px, py);
+                    std::cout << 'O';
+
+                    gotoxy(0, HEIGHT + 1);
+                    std::cout << "                                                  ";
+                }
+            }
+        }
+        Sleep(40);
+    }
+
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO ci = {1, TRUE};
+    SetConsoleCursorInfo(h, &ci);
+
+    gotoxy(0, HEIGHT + 6);
+    std::cout << "Gracias por jugar. Presiona Enter para cerrar...";
+    std::cin.get();
+
+    return 0;
+}
